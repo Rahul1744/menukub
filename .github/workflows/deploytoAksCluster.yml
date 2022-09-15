@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: conregkub.azurecr.io
+        username: ${{ secrets.acr_conregkub_username }}
+        password: ${{ secrets.acr_conregkub_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/MenuItemsListingAPI" -f  "MenuItemsListingAPI/Dockerfile" -t conregkub.azurecr.io/kubclust:${{ github.sha }} --label dockerfile-path=MenuItemsListingAPI/Dockerfile
+        docker push conregkub.azurecr.io/kubclust:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_kubclust_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep kubclust9235 | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace kubclust9235`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: kubclust9235
+        container-registry-url: conregkub.azurecr.io
+        container-registry-username: ${{ secrets.acr_conregkub_username }}
+        container-registry-password: ${{ secrets.acr_conregkub_password }}
+        secret-name: kubclustdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: kubclust9235
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          conregkub.azurecr.io/kubclust:${{ github.sha }}
+        imagepullsecrets: |
+          kubclustdockerauth
