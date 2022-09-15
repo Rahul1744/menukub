@@ -14,8 +14,10 @@ namespace MenuItemsListingAPI.Controllers
     {
         private static List<MenuItem> menuItems = new List<MenuItem>
             {
-                new MenuItem { MenuItemId=1 , Name="Coke" , FreeDelivery=true , Price=100 ,DateOfLaunch = new DateTime(2020,07,06) , Active=true },
-                new MenuItem { MenuItemId=2 , Name="Pepsi" , FreeDelivery=true , Price=100 ,DateOfLaunch = new DateTime(2020,06,07) , Active=true }
+                new MenuItem { MenuItemId=1 , Name="Samosa" , FreeDelivery=false , Price=50 ,DateOfLaunch = new DateTime(2021,08,09) , Active=true },
+                new MenuItem { MenuItemId=2 , Name="Kachori" , FreeDelivery=true , Price=60 ,DateOfLaunch = new DateTime(2021,06,02) , Active=true },
+                 new MenuItem { MenuItemId=1 , Name="Panipuri" , FreeDelivery=false , Price=40 ,DateOfLaunch = new DateTime(2021,04,06) , Active=true },
+                new MenuItem { MenuItemId=2 , Name="Vadapav" , FreeDelivery=true , Price=70 ,DateOfLaunch = new DateTime(2021,04,04) , Active=false }
             };
 
         [HttpGet]
