@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "kubclust-c308"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "kubclust-c308"
+  template:
+    metadata:
+      labels:
+        app: "kubclust-c308"
+    spec:
+      containers:
+        - name: "kubclust-c308"
+          image: "conregkub.azurecr.io/kubclust"
+          ports:
+          - containerPort: 80
